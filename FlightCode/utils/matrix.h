@@ -1,23 +1,15 @@
-/*! \file	matrix.h
- *	\brief	matrix mathematics header file
- *
- *	\details
- *	by:	    ko shu pui, patrick
- *	date:	24 nov 91	v0.1b
- *	revi:   Rodney Teo and Jung Soon Jang
- *	ref:
- *       [1] Mary L.Boas, "Mathematical Methods in the Physical Sciene,"
- *	John Wiley & Sons, 2nd Ed., 1983. Chap 3.
- *
- * \author University of Minnesota
- * \author Aerospace Engineering and Mechanics
- * \copyright Copyright 2011 Regents of the University of Minnesota. All rights reserved.
- *
- * $Id: matrix.h 752 2011-12-21 20:14:23Z murch $
+/*
+ * \file matrix.h
+ * \description Matrix math header file
+ *  
+ *  Created on: 5:18:33 PM Feb 4, 2015 by john
+ *  \author University of Minnesota
+ *  \author Aerospace Engineering and Mechanics
+ *  \copyright Copyright 2015 Regents of the University of Minnesota.  All rights reserved.
  */
 
-#ifndef MATRIX_H_
-#define MATRIX_H_
+#ifndef SOURCE_UTILS_MATRIX_H_
+#define SOURCE_UTILS_MATRIX_H_
 #include <stdio.h>
 /*
 *-----------------------------------------------------------------------------
@@ -56,7 +48,7 @@ typedef	double	**MATRIX;// double
 
 /*
 *----------------------------------------------------------------------------
-*	matrice types
+*	matrix types
 *----------------------------------------------------------------------------
 */
 #define UNDEFINED	-1
@@ -110,5 +102,5 @@ MATRIX mat_round (MATRIX X, MATRIX C);
 double mat_dot (MATRIX X, MATRIX Y);
 MATRIX mat_scalMult (MATRIX X,double A, MATRIX C);
 MATRIX mat_scalMul(MATRIX X,double A, MATRIX C);
-#endif
 
+#endif /* SOURCE_UTILS_MATRIX_H_ */

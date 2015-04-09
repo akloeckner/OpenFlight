@@ -19,17 +19,12 @@
 #include "../globaldefs.h"
 #include "control_interface.h"
 
-
-
 // ***********************************************************************************
 
 //#include "../aircraft/thor_config.h"  // for SIL_Sim
 #include AIRCRAFT_UP1DIR            // for Flight Code
 
 // ***********************************************************************************
-
-
-
 
 /// Definition of local functions: ****************************************************
 static double yaw_damper (double yawrate);
@@ -57,60 +52,9 @@ static double a_yaw[2] = {1.0,-0.9608}; // Filter denominator coefficients
 static double b_yaw[2] = {0.065, -0.065}; // Filter numerator coefficients
 static double dr; // Delta rudder
 /// ****************************************************************************************
-/// Roll and pitch angle digital controller - parameters and variables
-#ifdef AIRCRAFT_THOR
-	static double roll_gain[3]  = {-0.64,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.90,-0.30,-0.08};  // PI gains for theta tracker and pitch damper
-#endif
-#ifdef AIRCRAFT_TYR
-	static double roll_gain[3]  = {-0.64,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.90,-0.30,-0.08};  // PI gains for theta tracker and pitch damper
-#endif
-#ifdef AIRCRAFT_FASER
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};  // PI gains for theta tracker and pitch damper
-#endif
-#ifdef AIRCRAFT_IBIS
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};  // PI gains for theta tracker and pitch damper
-#endif
-#ifdef AIRCRAFT_BALDR
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};  // PI gains for theta tracker and pitch damper
-#endif
 static double da; // Delta aileron
 static double de; // Delta elevator
 /// *****************************************************************************************
-
-
-
-
-
-
-
-
-
-
-
-extern void get_control(double time, struct sensordata *sensorData_ptr, struct nav *navData_ptr, struct control *controlData_ptr) {
-/// Return control outputs based on references and feedback signals.
-
-#ifdef AIRCRAFT_THOR
-	double base_pitch_cmd= 0.0872664;  // (Thor Trim value) use 5 deg (0.0872664 rad) for flight, use 3.082 deg (0.0537910 rad) in sim
-#endif
-#ifdef AIRCRAFT_TYR
-	double base_pitch_cmd= 0.0872664;  // (Thor Trim value) use 5 deg (0.0872664 rad) for flight, use 3.082 deg (0.0537910 rad) in sim
-#endif
-#ifdef AIRCRAFT_FASER
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
-#ifdef AIRCRAFT_IBIS
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
-#ifdef AIRCRAFT_BALDR
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
-
 	double phi   = navData_ptr->phi;
 	double theta = navData_ptr->the - base_pitch_cmd; //subtract theta trim value to convert to delta coordinates
 	double p     = sensorData_ptr->imuData_ptr->p; // Roll rate
@@ -127,6 +71,12 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
 	controlData_ptr->dthr = 0; // throttle
 	controlData_ptr->df_l = 0; // left flap
 	controlData_ptr->df_r = 0; // right flap
+	
+#if(defined(AIRCRAFT_BALDR) || defined(HIL_SIM))
+	controlData_ptr->df_l = controlData_ptr->de; // left flap = left elevator
+	controlData_ptr->df_r = controlData_ptr->dr; // right flap = top rudder
+#endif
+
 }
 
 

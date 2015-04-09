@@ -8,50 +8,51 @@
  * \author Aerospace Engineering and Mechanics
  * \copyright Copyright 2011 Regents of the University of Minnesota. All rights reserved.
  *
- * $Id: thor_config.h 1010 2013-11-27 16:13:09Z brtaylor $
+ * $Id: thor_config.h 978 2013-04-24 18:11:05Z joh07594 $
  */
-#ifndef THOR_CONFIG_H_
-#define THOR_CONFIG_H_
+#ifndef miniMUTT_CONFIG_H_
+#define miniMUTT_CONFIG_H_
 
-#define AIRCRAFT_THOR	///< Aircraft name. Used in daq() for sensor processing.
+#define AIRCRAFT_miniMUTT	///< Aircraft name. Used in daq() for sensor processing.
 
 // Geometry Data for Air Data Probe
-#define PITOT_ALPHA_BIAS	0.0611	///< [rad], pitch angular offset of 5-hole pitot probe. Positive downwards from level
-#define PITOT_BETA_BIAS		0.0     ///< [rad], lateral angular offset of 5-hole pitot probe. Positive right from centerline
-#define PITOT2CG_X      	0.18 	///< m, position of pitot probe relative to cg, in body axis frame
-#define PITOT2CG_Y			0.36 	///< m, position of pitot probe relative to cg, in body axis frame
-#define PITOT2CG_Z			0.00 	///< m, position of pitot probe relative to cg, in body axis frame
+//#define PITOT_ALPHA_BIAS	0.0611	///< [rad], pitch angular offset of 5-hole pitot probe. Positive downwards from level
+//#define PITOT_BETA_BIAS		0.0     ///< [rad], lateral angular offset of 5-hole pitot probe. Positive right from centerline
+//#define PITOT2CG_X      	0.18 	///< m, position of pitot probe relative to cg, in body axis frame
+//#define PITOT2CG_Y			0.36 	///< m, position of pitot probe relative to cg, in body axis frame
+//#define PITOT2CG_Z			0.00 	///< m, position of pitot probe relative to cg, in body axis frame
 
-// Control Surface Trims, from Thor flight 26
+// Control Surface Trims -- PLACEHOLDERS
+// TO DO -- DEFINE TRIMS FOR ALL FLUTTER SUPRESSION SURFACES
 #define THROTTLE_TRIM   0.7		///< [ND], approximate throttle trim value
 #define ELEVATOR_TRIM  -0.0384 	///< [rad], approximate elevator trim value
-#define RUDDER_TRIM     0.0 	///< [rad], approximate rudder trim value
-#define AILERON_TRIM    0.0168 	///< [rad], approximate aileron trim value
+#define RUDDER_TRIM     0.0 	///< [rad], approximate rudder trim value  -- L1 Flutter Suppression Surface
+#define AILERON_TRIM    0.0 	///< [rad], approximate aileron trim value
 
 // Control Surface limits, max and min
 #define THROTTLE_MAX 	 1.0
 #define	THROTTLE_MIN	 0.0
-#define	RUDDER_MAX		 0.4363	///< [rad], 25deg
-#define	RUDDER_MIN		-0.4363 ///< [rad],-25deg
+#define	RUDDER_MAX		 0.4363	///< [rad], 25deg -- L1 Flutter Suppression Surface
+#define	RUDDER_MIN		-0.4363 ///< [rad],-25deg -- L1 Flutter Suppression Surface
 #define	ELEVATOR_MAX	 0.4363	///< [rad], 25deg
 #define	ELEVATOR_MIN	-0.4363 ///< [rad],-25deg
 #define L_AILERON_MAX	 0.4363	///< [rad], 25deg
 #define L_AILERON_MIN	-0.4363 ///< [rad],-25deg
-#define R_AILERON_MAX	 0.4363	///< [rad], 25deg
-#define R_AILERON_MIN	-0.4363 ///< [rad],-25deg
-#define L_FLAP_MAX	 	 0.4363	///< [rad], 25deg
-#define L_FLAP_MIN		-0.4363 ///< [rad],-25deg
-#define R_FLAP_MAX	 	 0.4363	///< [rad], 25deg
-#define R_FLAP_MIN		-0.4363	///< [rad],-25deg
+#define R_AILERON_MAX	 0.4363	///< [rad], 25deg -- R1 Flutter Suppression Surface
+#define R_AILERON_MIN	-0.4363 ///< [rad],-25deg -- R1 Flutter Suppression Surface
+#define L_FLAP_MAX	 	 0.4363	///< [rad], 25deg -- L4 Flutter Suppression Surface
+#define L_FLAP_MIN		-0.4363 ///< [rad],-25deg -- L4 Flutter Suppression Surface
+#define R_FLAP_MAX	 	 0.4363	///< [rad], 25deg -- R4 Flutter Suppression Surface
+#define R_FLAP_MIN		-0.4363	///< [rad],-25deg -- R4 Flutter Suppression Surface
 
-// MPC5200 PWM output channel assignments
+// MPC5200 PWM output channel assignments -- THESE ARE NOT WIRED RIGHT NOW
 #define PWMOUT_DTHR_CH  0 ///<  PWM output channel for throttle
 #define PWMOUT_DE_CH  	1 ///<  PWM output channel for elevator
-#define PWMOUT_DR_CH 	2 ///<  PWM output channel for rudder
+#define PWMOUT_DR_CH 	2 ///<  PWM output channel for rudder  -- L1 Flutter Suppression Surface
 #define PWMOUT_DA_L_CH 	3 ///<  PWM output channel for left aileron
-#define PWMOUT_DA_R_CH 	4 ///<  PWM output channel for right aileron
-#define PWMOUT_DF_L_CH 	5 ///<  PWM output channel for left flap
-#define PWMOUT_DF_R_CH	7 ///<  PWM output channel for right flap
+#define PWMOUT_DA_R_CH 	4 ///<  PWM output channel for right aileron  -- R1 Flutter Suppression Surface
+#define PWMOUT_DF_L_CH 	5 ///<  PWM output channel for left flap  -- L4 Flutter Suppression Surface
+#define PWMOUT_DF_R_CH	7 ///<  PWM output channel for right flap  -- R4 Flutter Suppression Surface
 
 // MPC5200 PWM output command calibration parameters
 #define PWMOUT_DTHR_CAL {1382,3514} ///< linear calibration for throttle, pwm 1.292ms (motor off) to 1.800ms (100% pwr), from ESC data. Note motor on value is 1.307ms Register values from MPC Servo Calibration.xls

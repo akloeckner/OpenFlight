@@ -1,13 +1,11 @@
-/*! \file	matrix.c
- *	\brief	matrix mathematics source file
- *
- *	\details
- *
- *	 * \author University of Minnesota
- * \author Aerospace Engineering and Mechanics
- * \copyright Copyright 2011 Regents of the University of Minnesota. All rights reserved.
- *
- * $Id: matrix.c 929 2012-10-29 16:50:59Z joh07594 $
+/*
+ * \file matrix.c
+ * \description Matrix mathematics source file
+ *  
+ *  Created on: 5:16:58 PM Feb 4, 2015 by john
+ *  \author University of Minnesota
+ *  \author Aerospace Engineering and Mechanics
+ *  \copyright Copyright 2015 Regents of the University of Minnesota.  All rights reserved.
  */
 
 #include <stdio.h>
@@ -17,7 +15,6 @@
 #include <errno.h>
 #include <math.h>
 #include "matrix.h"
-
 
 /////////////////////////////////// comment out for SIL sim
 #include <unistd.h>
@@ -1301,3 +1298,5 @@ MATRIX mat_subcopy(MATRIX A, int row, int col, MATRIX B)
 	}
 	return(B);
 }
+
+

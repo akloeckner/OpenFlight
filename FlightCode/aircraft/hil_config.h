@@ -32,12 +32,13 @@ int hilPort;					///< Handle for serial port. Used in actuators() and daq().
 #define TELEMETRY_PORT 		SERIAL_PORT3	///< Serial port for telemetry()
 #define TELEMETRY_BAUDRATE	B115200			///< Baud rate of serial port for telemetry()
 
-
-// Control Surface Trims from Thor, 17 m/s
-#define THROTTLE_TRIM   0.5702 ///< [ND], approximate throttle trim value
-#define ELEVATOR_TRIM  -0.0961 ///< [rad], approximate elevator trim value
-#define RUDDER_TRIM     0.0027 ///< [rad], approximate rudder trim value
-#define AILERON_TRIM    0.010  ///< [rad], approximate aileron trim value
+// Control Surface Trims, from faser_flight01
+#define THROTTLE_TRIM   0.507 ///< [ND], approximate throttle trim value
+#define ELEVATOR_TRIM  -0.0887 ///< [rad], approximate elevator trim value (right elevator)
+#define RUDDER_TRIM     0.0  ///< [rad], approximate rudder trim value (bottom rudder)
+#define AILERON_TRIM   -0.0053 ///< [rad], approximate aileron trim value
+#define L_FLAP_TRIM		-0.0887 ///< [rad], approximate left flap trim value (left elevator)
+#define R_FLAP_TRIM 	0.0 ///< [rad], approximate right flap trim value (top rudder)
 
 // Control Surface Limits, max and min
 #define 	THROTTLE_MAX 	 1.0

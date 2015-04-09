@@ -1,28 +1,19 @@
 /*! \file tyr_config.h
- *	\brief Configuration defines for the Thor aircraft.
+ *	\brief Configuration defines for the Tyr aircraft.
  *
- *	\details This file contains the geometry, surface calibrations and limits, and serial port configuration for the Thor aircraft.
+ *	\details This file contains the geometry, surface calibrations and limits, and serial port configuration for the Tyr aircraft.
  *	\ingroup aircraft_cfg
  *
  * \author University of Minnesota
  * \author Aerospace Engineering and Mechanics
  * \copyright Copyright 2011 Regents of the University of Minnesota. All rights reserved.
  *
- * $Id: thor_config.h 1010 2013-11-27 16:13:09Z brtaylor $
+ * $Id: tyr_config.h 1010 2013-11-27 16:13:09Z brtaylor $
  */
 #ifndef TYR_CONFIG_H_
 #define TYR_CONFIG_H_
 
 #define AIRCRAFT_TYR	///< Aircraft name. Used in daq() for sensor processing.
-
-// GPS Sensor Configuration
-#define GPS_PORT 		SERIAL_PORT2	///< Serial port for GPS receiver, used in init_daq()
-//#define GPS_BAUDRATE	B57600			///< Baud rate of serial port for GPS receiver (sirf), used in init_daq()
-#define GPS_BAUDRATE	B115200			///< Baud rate of serial port for GPS receiver (crescent), used in init_daq()
-
-// Downlink telemetry configuration
-#define TELEMETRY_PORT 		SERIAL_PORT3	///< Serial port for telemetry()
-#define TELEMETRY_BAUDRATE	B115200			///< Baud rate of serial port for telemetry()
 
 // Geometry Data for Air Data Probe
 #define PITOT_ALPHA_BIAS	0.0611	///< [rad], pitch angular offset of 5-hole pitot probe. Positive downwards from level
@@ -31,7 +22,7 @@
 #define PITOT2CG_Y			0.36 	///< m, position of pitot probe relative to cg, in body axis frame
 #define PITOT2CG_Z			0.00 	///< m, position of pitot probe relative to cg, in body axis frame
 
-// Control Surface Trims, from Thor flight 26
+// Control Surface Trims, Copied for Tyr from Thor flight 26
 #define THROTTLE_TRIM   0.7		///< [ND], approximate throttle trim value
 #define ELEVATOR_TRIM  -0.0384	///< [rad], approximate elevator trim value 
 #define RUDDER_TRIM     0.0 	///< [rad], approximate rudder trim value

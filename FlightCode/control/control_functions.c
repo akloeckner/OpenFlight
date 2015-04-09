@@ -18,7 +18,6 @@
 #include AIRCRAFT_UP1DIR
 #include "control_interface.h"
 
-
 extern void add_trim_bias(struct control * controlData_ptr){
 	// Bias controller commands with approximate trim values (set in aircraft/XXX_config.h)				
 	controlData_ptr->dthr += THROTTLE_TRIM; // throttle
@@ -26,6 +25,13 @@ extern void add_trim_bias(struct control * controlData_ptr){
 	controlData_ptr->dr   += RUDDER_TRIM; // rudder
 	controlData_ptr->da_l -= AILERON_TRIM; // left aileron
 	controlData_ptr->da_r += AILERON_TRIM; // right aileron
+
+	// Trim extra surfaces for BALDR
+	#if(defined(AIRCRAFT_BALDR) || defined(HIL_SIM))
+		controlData_ptr->df_l += L_FLAP_TRIM; // left flap = left elevator
+		controlData_ptr->df_r += R_FLAP_TRIM; // right flap = top rudder
+	#endif
+		
 }
 
 extern void subtract_trim_bias(struct control * controlData_ptr){
@@ -35,4 +41,11 @@ extern void subtract_trim_bias(struct control * controlData_ptr){
 	controlData_ptr->dr   -= RUDDER_TRIM; // rudder
 	controlData_ptr->da_l += AILERON_TRIM; // left aileron
 	controlData_ptr->da_r -= AILERON_TRIM; // right aileron
+	
+	// Trim extra surfaces for BALDR
+#if(defined(AIRCRAFT_BALDR) || defined(HIL_SIM))
+		controlData_ptr->df_l -= L_FLAP_TRIM; // left flap = left elevator
+		controlData_ptr->df_r -= R_FLAP_TRIM; // right flap = top rudder
+	#endif
+
 }

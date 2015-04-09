@@ -19,9 +19,7 @@
 #include "../system_id/systemid_interface.h"
 #include "../utils/matrix.h"
 #include "guidance_interface.h"
-
-
-
+#include "../navigation/nav_functions.h"
 
 //////////////////////////////////////////////////////////////
 //#include "../utils/matrix.c" //Required for SIL sim only. Also must comment out #include <unistd.h> and #include <termios.h> inside matrix.c
@@ -36,7 +34,6 @@
 //local function definition
 void LatLonAltToEcef2(MATRIX vector, MATRIX position);
 double distance2waypoint(MATRIX wp_curr, MATRIX pos_ned);
-double wraparound(double dta);
 double mysign(double v);
 
 //////////////////////////////////////////////////////////////
@@ -311,9 +308,7 @@ double mysign(double v) {
 
 void LatLonAltToEcef2(MATRIX vector, MATRIX position) {
     
-    #define EARTH_RADIUS 6378137         /* earth semi-major axis radius (m) */
-            #define ECC2		 0.0066943799901 /* major eccentricity squared */
-            double Rn, alt, denom;
+    double Rn, alt, denom;
     double sinlat, coslat, coslon, sinlon;
     
     
@@ -335,18 +330,6 @@ void LatLonAltToEcef2(MATRIX vector, MATRIX position) {
 
 double distance2waypoint(MATRIX wp_curr, MATRIX pos_ned) {
     return sqrt( pow((wp_curr[0][0]-pos_ned[0][0]), 2) + pow((wp_curr[1][0]-pos_ned[1][0]), 2) );
-}
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// wrap around for -180 and + 180
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-double wraparound(double dta) {
-    
-    //bound heading angle between -180 and 180
-    if(dta >  PI) dta -= PI2;
-    if(dta < -PI) dta += PI2;
-    
-    return dta;
 }
 
 void close_guidance(void){

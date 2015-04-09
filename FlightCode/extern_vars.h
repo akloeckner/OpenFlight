@@ -1,18 +1,18 @@
-/*! \file extern_vars.h
- *	\brief External variable declaration header
- *
- *	\details This file is used to declare all of the external variables
- *
- * \author University of Minnesota
- * \author Aerospace Engineering and Mechanics
- * \copyright Copyright 2011 Regents of the University of Minnesota. All rights reserved.
- *
- * $Id: extern_vars.h 761 2012-01-19 17:23:49Z murch $
+/*
+ * \file extern_vars.h
+ * \description This file is used to declare all of the external variables
+ *  
+ *  Created on: 5:05:54 PM Feb 4, 2015 by john
+ *  \author University of Minnesota
+ *  \author Aerospace Engineering and Mechanics
+ *  \copyright Copyright 2015 Regents of the University of Minnesota.  All rights reserved.
  */
 
-#ifndef EXTERN_VARS_H_
-#define EXTERN_VARS_H_
+#ifndef SOURCE_EXTERN_VARS_H_
+#define SOURCE_EXTERN_VARS_H_
 
 
 
-#endif
+
+
+#endif /* SOURCE_EXTERN_VARS_H_ */

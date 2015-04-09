@@ -15,14 +15,6 @@
 
 #define AIRCRAFT_LOKI	///< Aircraft name. Used in daq() for sensor processing.
 
-// GPS Sensor Configuration
-#define GPS_PORT 		SERIAL_PORT2	///< Serial port for GPS receiver, used in init_daq()
-#define GPS_BAUDRATE	B57600			///< Baud rate of serial port for GPS receiver, used in init_daq()
-
-// Downlink telemetry configuration
-#define TELEMETRY_PORT SERIAL_PORT3		///< Serial port for telemetry()
-#define TELEMETRY_BAUDRATE B115200		///< Baud rate of serial port for telemetry()
-
 // Control Surface Trims
 #define ELEVATOR_TRIM  -0.0314 ///< [rad], approximate elevator trim value
 #define AILERON_TRIM    0.0175 ///< [rad], approximate aileron trim value

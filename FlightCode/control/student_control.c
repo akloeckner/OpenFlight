@@ -21,8 +21,8 @@
 // ***********************************************************************************
 // ***********************************************************************************
 // ***********************************************************************************
-#include "../aircraft/thor_config.h"  // for SIL_Sim
-//#include AIRCRAFT_UP1DIR            // for Flight Code
+//#include "../aircraft/thor_config.h"  // for SIL_Sim
+#include AIRCRAFT_UP1DIR            // for Flight Code
 // ***********************************************************************************
 // ***********************************************************************************
 // ***********************************************************************************
@@ -222,13 +222,6 @@ static double pitch_control(double the_ref, double pitch, double pitchrate, doub
 
 	return de;  //rad
 }
-
-
-
-
-
-
-
 
 // Reset of controller
 extern void reset_control(struct control *controlData_ptr){

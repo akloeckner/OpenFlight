@@ -1,3 +1,10 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 2, 2015
+ *      Author: John
+ */
+
 /*! \file main.c
  *	\brief Main function, thread 0
  *
@@ -15,15 +22,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <cyg/kernel/kapi.h>
-#include <cyg/cpuload/cpuload.h>
 
 #include "globaldefs.h"
 #include "utils/misc.h"
-#include "utils/scheduling.h"
-#include "threads/threads.h"
 
 // Interfaces
 #include "sensors/AirData/airdata_interface.h"
@@ -36,8 +40,6 @@
 #include "faults/fault_interface.h"
 #include "datalog/datalog_interface.h"
 #include "telemetry/telemetry_interface.h"
-
-#include AIRCRAFT
 
 // External variable definition. Declared in extern_vars.h
 
@@ -58,14 +60,12 @@ int main(int argc, char **argv) {
 	// Data Structures
 	struct  imu   imuData;
 	struct  gps   gpsData;
+	struct	insgps insgpsData;
+	struct	ahrsdr ahrsdrData;
 	struct  nav   navData;
 	struct  control controlData;
 	struct  airdata adData;
 	struct  surface surfData;
-
-	// Additional data structures for GPS FASER
-	struct  gps   gpsData_l;
-	struct  gps   gpsData_r;
 
 	// sensor data
 	struct sensordata sensorData;
@@ -98,39 +98,19 @@ int main(int argc, char **argv) {
 	double tic,time,t0=0;
 	static int t0_latched = FALSE;
 	int loop_counter = 0;
-	pthread_mutex_t	mutex;
-
-	uint32_t cpuCalibrationData, last100ms, last1s, last10s;
-	cyg_cpuload_t cpuload;
-	cyg_handle_t loadhandle;
 
 	// Populate sensorData structure with pointers to data structures
 	sensorData.imuData_ptr = &imuData;
 	sensorData.gpsData_ptr = &gpsData;
-	sensorData.gpsData_l_ptr = &gpsData_l;
-	sensorData.gpsData_r_ptr = &gpsData_r;
 	sensorData.adData_ptr = &adData;
 	sensorData.surfData_ptr = &surfData;
-
-	// Set main thread to highest priority
-	struct sched_param param;
-	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-	pthread_setschedparam(pthread_self(), SCHED_FIFO, &param);
-
-	// Setup CPU load measurements
-	cyg_cpuload_calibrate(&cpuCalibrationData);
-	cyg_cpuload_create(&cpuload, cpuCalibrationData, &loadhandle);
 
 	// Initialize set_actuators (PWM or serial) at zero
 	init_actuators();
 	set_actuators(&controlData);
 
-	// Initialize mutex variable. Needed for pthread_cond_wait function
-	pthread_mutex_init(&mutex, NULL);
-	pthread_mutex_lock(&mutex);
-
-	// initialize functions	
-	init_daq(&sensorData, &navData, &controlData);
+	// initialize functions
+	init_daq(&sensorData, &insgpsData, &ahrsdrData, &navData, &controlData);
 	init_telemetry();
 
 	while(1){
@@ -155,25 +135,54 @@ int main(int argc, char **argv) {
 
 			loop_counter++; //.increment loop counter
 
-			//**** DATA ACQUISITION **************************************************
-			pthread_cond_wait (&trigger_daq, &mutex); // WAIT FOR DAQ ALARMS
-			tic = get_Time();			
-			get_daq(&sensorData, &navData, &controlData);		
-			etime_daq = get_Time() - tic - DAQ_OFFSET; // compute execution time
-			//************************************************************************
-
 			//**** NAVIGATION ********************************************************
-			if(navData.err_type == got_invalid){ // check if NAV filter has been initialized
 
-					if(gpsData.navValid == 0) // check if GPS is locked, comment out if using micronav_ahrs
-
-					init_nav(&sensorData, &navData, &controlData);// Initialize NAV filter
+			//*********************************Run Parallel Nav Filters***********************************//
+			// Run AHRS
+			if (ahrsdrData.err_type == got_invalid){ // check if AHRS filter has been initialized
+				// Initialize AHRS filter
+				init_ahrs(&sensorData, &ahrsdrData, &controlData);
+				send_status("AHRS initialized");
 			}
-			else
-				get_nav(&sensorData, &navData, &controlData);// Call NAV filter
+			else{
+				// Call AHRS
+				get_ahrs(&sensorData, &ahrsdrData, &controlData);
+			}
 
-			etime_nav = get_Time() - tic - etime_daq; // compute execution time			
-			//************************************************************************
+			// Run DR & GPS-aided INS filters
+			if (ahrsdrData.err_type_2 == got_invalid){ // Check if DR has been initialized
+				if (gpsData.navValid == 0) {// check if GPS is locked
+					// Initialize DR & GPS-aided INS filters
+					init_dr(&sensorData, &ahrsdrData, &controlData);
+					init_insgps(&sensorData, &insgpsData, &controlData, &ahrsdrData);
+					send_status("Position initialized");
+				}
+			}
+			else{
+				// Call DR & GPS-aided INS filters
+				get_dr(&sensorData, &ahrsdrData, &controlData);
+				get_insgps(&sensorData, &insgpsData, &controlData, &ahrsdrData);
+				// Ensure that GPS newData flag is reset AFTER filters run
+				if (gpsData.newData == 1){
+					gpsData.newData = 0;
+				}
+			}
+			//********************************************************************************************//
+
+			//********************************Run Blending Nav Filter*************************************//
+			if (navData.err_type == got_invalid){ // check if Blending filter has been initialized
+				// Initialize Blender
+				init_nav(&sensorData, &insgpsData, &ahrsdrData, &navData);
+				send_status("Blending initialized");
+			}
+
+			else{
+				// Call Blender
+				get_nav(&sensorData, &insgpsData, &ahrsdrData, &navData);
+			}
+			//********************************************************************************************//
+
+			//**** END NAVIGATION ********************************************************
 
 			if (controlData.mode == 2) { // autopilot mode
 				if (t0_latched == FALSE) {
@@ -186,7 +195,7 @@ int main(int argc, char **argv) {
 				//**** GUIDANCE **********************************************************
 				get_guidance(time, &sensorData, &navData, &controlData);
 				etime_guidance= get_Time() - tic - etime_nav - etime_daq; // compute execution time
-				//************************************************************************		
+				//************************************************************************
 
 				//**** SENSOR FAULT ******************************************************
 				get_sensor_fault(time, &sensorData, &navData, &controlData);
@@ -196,7 +205,7 @@ int main(int argc, char **argv) {
 				//**** CONTROL ***********************************************************
 				get_control(time, &sensorData, &navData, &controlData);
 				etime_control = get_Time() - tic - etime_sensfault - etime_guidance - etime_nav - etime_daq; // compute execution time
-				//************************************************************************		
+				//************************************************************************
 
 				//**** SYSTEM ID *********************************************************
 				get_system_id(time, &sensorData, &navData, &controlData);
@@ -210,17 +219,16 @@ int main(int argc, char **argv) {
 
 			}
 			else{
-				if (t0_latched == TRUE) {				
+				if (t0_latched == TRUE) {
 					t0_latched = FALSE;
 				}
 				reset_control(&controlData); // reset controller states and set get_control surfaces to zero
-			} // end if (controlData.mode == 2) 
+			} // end if (controlData.mode == 2)
 
 			// Add trim biases to get_control surface commands
 			add_trim_bias(&controlData);
 
 			//**** ACTUATORS *********************************************************
-			pthread_cond_wait (&trigger_actuators, &mutex);		   // WAIT FOR ACTUATOR ALARMS
 			set_actuators(&controlData);
 			etime_actuators = get_Time() - tic - ACTUATORS_OFFSET; // compute execution time
 			//************************************************************************
@@ -239,10 +247,10 @@ int main(int argc, char **argv) {
 				cpuLoad = (uint16_t)last100ms;
 
 				send_telemetry(&sensorData, &navData, &controlData, cpuLoad);
-				
+
 				etime_telemetry = get_Time() - tic - etime_datalog - etime_actuators - ACTUATORS_OFFSET; // compute execution time
 			}
-			//************************************************************************	
+			//************************************************************************
 
 #ifndef HIL_SIM
 			// Take zero on pressure sensors during first 10 seconds
@@ -259,11 +267,15 @@ int main(int argc, char **argv) {
 	/**********************************************************************
 	 * close
 	 **********************************************************************/
-	pthread_mutex_destroy(&mutex);
-	close_actuators();	
+
+	close_actuators();
+	close_ahrs();
+	close_insgps();
+	close_dr();
 	close_nav();
 
 	return 0;
 
 } // end main
+
 

@@ -19,7 +19,7 @@
 // Declare function prototypes
 void MdlUpdate(int_T tid);
 void MdlOutputs(int_T tid);
-void MdlInitialize(void);
+void MdlStart(void);
 
 
 void get_control(double time, struct sensordata *sensorData_ptr, struct nav *navData_ptr, struct control *controlData_ptr){
@@ -82,7 +82,7 @@ void get_control(double time, struct sensordata *sensorData_ptr, struct nav *nav
 
 void reset_control(struct control *controlData_ptr){
 	// Reset internal states to initial condition
-	MdlInitialize();
+	MdlStart();
 	
 	controlData_ptr->dthr = 0; // throttle
 	controlData_ptr->de   = 0; // elevator

@@ -15,23 +15,6 @@
 
 #define AIRCRAFT_IBIS	///< Aircraft name. Used in daq() for sensor processing.
 
-// GPS Sensor Configuration CENTER, top board 
-#define GPS_PORT 		SERIAL_PORT2	///< Serial port for GPS receiver (CENTER, top board), used in init_daq(), PSC5
-#define GPS_BAUDRATE	B115200			///< Baud rate of serial port for GPS receiver, used in init_daq()
-
-// SERIAL_PORT1 is problematic! 
-// GPS Sensor Configuration LEFT WING, 2nd level, rear board
-#define GPS_PORT_L 		SERIAL_PORT1	///< Serial port for GPS receiver (LEFT WING, 2nd level, rear board), used in init_daq(), PSC6
-#define GPS_BAUDRATE_L	B115200			///< Baud rate of serial port for GPS receiver, used in init_daq()
-
-// GPS Sensor Configuration RIGHT WING, 2nd level, front board
-#define GPS_PORT_R 		SERIAL_PORT4	///< Serial port for GPS receiver (RIGHT WING, 2nd level, front board), used in init_daq(),  CODEC
-#define GPS_BAUDRATE_R	B115200			///< Baud rate of serial port for GPS receiver, used in init_daq()
-
-// Downlink telemetry configuration
-#define TELEMETRY_PORT SERIAL_PORT3		///< Serial port for telemetry()
-#define TELEMETRY_BAUDRATE B115200		///< Baud rate of serial port for telemetry()
-
 // Geometry Data for Pitot Probe
 #define PITOT_ALPHA_BIAS  0.0611 ///< [rad], pitch angular offset of 5-hole pitot probe. Positive downwards from level
 #define PITOT_BETA_BIAS   0.0    ///< [rad], lateral angular offset of 5-hole pitot probe. Positive right from centerline

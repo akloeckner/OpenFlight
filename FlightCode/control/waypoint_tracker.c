@@ -65,42 +65,6 @@ static double a_yaw[2] = {1.0,-0.9608}; // Filter denominator coefficients
 static double b_yaw[2] = {0.065, -0.065}; // Filter numerator coefficients
 static double dr; // Delta rudder
 /// ****************************************************************************************
-/// Roll, Pitch, Altitude, & Speed Controller Gains
-#ifdef AIRCRAFT_THOR
-	static double roll_gain[3]  = {-0.64,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.90,-0.30,-0.08};  // PI gains for theta tracker and pitch damper
-	static double alt_gain[2] 	= {0.023,0.0010}; 		// PI gains for altitude tracker
-	static double v_gain[2] 	= {0.15, 0.040};		// PI gains for speed tracker
-	static double head_gain 	= 1.5;					// P gain for heading tracker
-#endif
-#ifdef AIRCRAFT_TYR
-	static double roll_gain[3]  = {-0.64,-0.20,-0.07};  // PI gains for roll tracker and roll damper
-	static double pitch_gain[3] = {-0.90,-0.30,-0.08};  // PI gains for theta tracker and pitch damper
-	static double alt_gain[2] 	= {0.023,0.0010}; 		// PI gains for altitude tracker
-	static double v_gain[2] 	= {0.15, 0.040};		// PI gains for speed tracker
-	static double head_gain 	= 1.5;					// P gain for heading tracker
-#endif
-#ifdef AIRCRAFT_FASER
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};
-	static double alt_gain[2] 	= {0.021,0.0017};
-	static double v_gain[2] 	= {0.091, 0.020};
-	static double head_gain 	= 1.2;
-#endif
-#ifdef AIRCRAFT_IBIS
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};
-	static double alt_gain[2] 	= {0.021,0.0017};
-	static double v_gain[2] 	= {0.091, 0.020};
-	static double head_gain 	= 1.2;
-#endif
-#ifdef AIRCRAFT_BALDR
-	static double roll_gain[3]  = {-0.52,-0.20,-0.07};
-	static double pitch_gain[3] = {-0.84,-0.23,-0.08};
-	static double alt_gain[2] 	= {0.021,0.0017};
-	static double v_gain[2] 	= {0.091, 0.020};
-	static double head_gain 	= 1.2;
-#endif
 static double da; // Delta aileron
 static double de; // Delta elevator
 static double dthr; // Delta throttle
@@ -120,23 +84,6 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
 
 	// PLACE OPTIONAL PHI BIAS HERE
 	//navData_ptr->phi += DEG*pi/180;
-
-
-#ifdef AIRCRAFT_THOR
-	double base_pitch_cmd= 0.0872664;  	// (Trim value) use 5 deg (0.0872664 rad) for flight, use 3.082 deg (0.0537910 rad) in sim
-#endif
-#ifdef AIRCRAFT_TYR
-	double base_pitch_cmd= 0.0872664;  	// (Trim value) use 5 deg (0.0872664 rad) for flight, use 3.082 deg (0.0537910 rad) in sim
-#endif
-#ifdef AIRCRAFT_FASER
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
-#ifdef AIRCRAFT_IBIS
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
-#ifdef AIRCRAFT_BALDR
-	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
-#endif
 	double phi   = navData_ptr->phi;					    // Roll angle
 	double theta = navData_ptr->the - base_pitch_cmd; 	    // Pitch angle: subtract theta trim value to convert to delta coordinates
 	double psi	 = atan2(navData_ptr->ve,navData_ptr->vn);  // Ground Track Heading angle
@@ -148,16 +95,12 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
     // Filter altitude and airspeed signals USE FOR SIL ONLY
 	//sensorData_ptr->adData_ptr->h_filt = lp_filter(sensorData_ptr->adData_ptr->h, u_alt, y_alt);  	    // filtered ALTITUDE
 	//sensorData_ptr->adData_ptr->ias_filt = lp_filter(sensorData_ptr->adData_ptr->ias, u_speed, y_speed);	// filtered AIRSPEED
-
-
-
     
     // Snapshots
 	if(time <= 50*TIMESTEP){
 		controlData_ptr->signal_1 = psi;  // store initial HEADING on dummy variable signal_1
 		controlData_ptr->signal_0 = sensorData_ptr->adData_ptr->h_filt;   	// store initial ALTITUDE on dummy variable signal_0
 	}
-
 
 	// Phase wrap
 	controlData_ptr->signal_2 = phase_wrapper(psi, controlData_ptr->signal_3 - psi);		// Store the wrapped psi value
@@ -169,8 +112,6 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
 	controlData_ptr->dthr = speed_control(controlData_ptr->ias_cmd, sensorData_ptr->adData_ptr->ias_filt, TIMESTEP);
 	controlData_ptr->df_l = 0;
 	controlData_ptr->df_r = 0;
-
-
 }
 
 // PhaseWrap code to calculate actual heading angle
