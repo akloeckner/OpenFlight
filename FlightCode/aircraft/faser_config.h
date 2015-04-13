@@ -24,6 +24,10 @@
 #define TELEMETRY_PORT SERIAL_PORT3		///< Serial port for telemetry()
 #define TELEMETRY_BAUDRATE B115200		///< Baud rate of serial port for telemetry()
 
+//Onboard data log
+#define SD_PORT		SERIAL_PORT4		///< Serial port for sd()
+#define SD_BAUDRATE 	B115200			///< Serial port for  sd()
+
 // Set geometry values to zero to 'disable' the rate corrections for now. AMM 9/12/11
 // Geometry Data for Left Air Data Vane
 #define L_VANE_ALPHA_BIAS    0.00  ///< [rad], pitch angular offset of vane. Positive downwards from level

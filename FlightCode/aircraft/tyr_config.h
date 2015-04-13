@@ -24,6 +24,11 @@
 #define TELEMETRY_PORT 		SERIAL_PORT3	///< Serial port for telemetry()
 #define TELEMETRY_BAUDRATE	B115200			///< Baud rate of serial port for telemetry()
 
+//Onboard data log
+#define SD_PORT		SERIAL_PORT4		///< Serial port for sd()
+#define SD_BAUDRATE 	B115200			///< Serial port for  sd()
+
+
 // Geometry Data for Air Data Probe
 #define PITOT_ALPHA_BIAS	0.0611	///< [rad], pitch angular offset of 5-hole pitot probe. Positive downwards from level
 #define PITOT_BETA_BIAS		0.0     ///< [rad], lateral angular offset of 5-hole pitot probe. Positive right from centerline

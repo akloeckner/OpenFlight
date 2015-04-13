@@ -138,7 +138,8 @@ int main(int argc, char **argv) {
 	// initialize functions	
 	init_daq(&sensorData, &navData, &controlData);
 	init_telemetry();
-
+	init_sd();
+	
 	while(1){
 		missionData.mode = 1; 						// initialize to manual mode
 		missionData.run_num = 0; 					// reset run counter
@@ -257,7 +258,11 @@ int main(int argc, char **argv) {
 			datalogger();
 			etime_datalog = get_Time() - tic - etime_actuators - ACTUATORS_OFFSET; // compute execution time
 			//************************************************************************
-
+			
+			//****SD LOG *************************************************************
+			send_sd(&sensorData);
+			
+			
 			//**** TELEMETRY *********************************************************
 			if(loop_counter >= BASE_HZ/TELEMETRY_HZ){
 				loop_counter = 0;
@@ -270,8 +275,10 @@ int main(int argc, char **argv) {
 				
 				etime_telemetry = get_Time() - tic - etime_datalog - etime_actuators - ACTUATORS_OFFSET; // compute execution time
 			}
-			//************************************************************************	
-
+			//************************************************************************
+			
+			
+			
 #ifndef HIL_SIM
 			// Take zero on pressure sensors during first 10 seconds
 			if (tic > 4.0 && tic < 10.0){
